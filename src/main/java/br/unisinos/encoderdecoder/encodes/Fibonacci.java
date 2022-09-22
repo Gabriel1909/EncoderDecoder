@@ -1,17 +1,17 @@
 package br.unisinos.encoderdecoder.encodes;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.io.InputStream;
 
 public class Fibonacci implements Encode {
 
     @Override
-    public byte[] encode(MultipartFile arquivo) {
-        return new byte[0];
+    public StringBuilder encode(InputStream arquivo, StringBuilder codificacao) {
+        return new StringBuilder();
     }
 
     @Override
-    public byte[] decode(MultipartFile arquivo) {
-        return new byte[0];
+    public StringBuilder decode(InputStream arquivo) {
+        return new StringBuilder();
     }
 
 }

@@ -1,11 +1,10 @@
 package br.unisinos.encoderdecoder.encodes;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
+import java.io.InputStream;
 
 public interface Encode {
 
-    byte[] encode(MultipartFile arquivo) throws IOException;
-    byte[] decode(MultipartFile arquivo) throws IOException;
+    StringBuilder encode(InputStream arquivo, StringBuilder codificacao) throws IOException;
+    StringBuilder decode(InputStream arquivo) throws IOException;
 }

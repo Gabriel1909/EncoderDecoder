@@ -1,86 +1,74 @@
 package br.unisinos.encoderdecoder.encodes;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
+import static br.unisinos.encoderdecoder.service.EncoderService.*;
 
 public class EliasGamma implements Encode {
 
-    public static final String ZERO = "0";
-    public static final String UM = "1";
     public static final int OFFSET = 1;
-    public static final int ZERO_BYTE = 48;
 
     @Override
-    public byte[] encode(MultipartFile arquivo) throws IOException {
+    public StringBuilder encode(InputStream arquivo, StringBuilder codificacao) throws IOException {
 
-        StringBuilder retorno = new StringBuilder();
+        while (arquivo.available() > 0) {
+            int ascii = arquivo.read() + OFFSET;
 
-        try (InputStream input = arquivo.getInputStream()) {
-            while (input.available() > 0) {
-                int ascii = input.read() + OFFSET;
+            int log = (int) Math.floor(Math.log10(ascii) / Math.log10(2));
 
-                double log = Math.floor(Math.log10(ascii) / Math.log10(2));
+            int resto = (int) (ascii % (Math.pow(2, log)));
 
-                int resto = (int) (ascii % (Math.pow(2, log)));
+            codificacao.append(ZERO.repeat(log));
 
-                for (int i = 0; i < log; i++) {
-                    retorno.append(ZERO);
+            codificacao.append(UM);
+
+            if (log > 0 || resto > 0) {
+
+                StringBuilder restoAdicionado = new StringBuilder(Integer.toBinaryString(resto));
+
+                while (restoAdicionado.length() < log) {
+                    restoAdicionado.insert(0, ZERO);
                 }
 
-                retorno.append(UM);
-
-                if (log > 0 || resto > 0){
-
-                    StringBuilder restoAdicionado = new StringBuilder(Integer.toBinaryString(resto));
-
-                    while (restoAdicionado.length() < log){
-                        restoAdicionado.insert(0, ZERO);
-                    }
-
-                    retorno.append(restoAdicionado);
-                }
+                codificacao.append(restoAdicionado);
             }
         }
 
-        return retorno.toString().getBytes(StandardCharsets.UTF_8);
+        return codificacao;
     }
 
     @Override
-    public byte[] decode(MultipartFile arquivo) throws IOException {
+    public StringBuilder decode(InputStream arquivo) throws IOException {
         StringBuilder retorno = new StringBuilder();
 
-        try (InputStream input = arquivo.getInputStream()) {
-            while (input.available() > 0) {
-                int ascii = input.read();
+        while (arquivo.available() > 0) {
+            int ascii = arquivo.read();
 
-                int log = 0;
+            int log = 0;
 
-                while (ascii == ZERO_BYTE) {
-                    log++;
-                    ascii = input.read();
-                }
-
-                StringBuilder binario = new StringBuilder();
-
-                for (int i = 0; i < log; i++) {
-                    binario.appendCodePoint(input.read());
-                }
-
-                int resto = 0;
-
-                if (log > 0){
-                    resto = Integer.parseInt(binario.toString(), 2);
-                }
-
-                int total = (int) (Math.pow(2, log) + resto);
-
-                retorno.appendCodePoint(total - OFFSET);
+            while (ascii == ZERO_BYTE) {
+                log++;
+                ascii = arquivo.read();
             }
+
+            StringBuilder binario = new StringBuilder();
+
+            for (int i = 0; i < log; i++) {
+                binario.appendCodePoint(arquivo.read());
+            }
+
+            int resto = 0;
+
+            if (log > 0) {
+                resto = Integer.parseInt(binario.toString(), 2);
+            }
+
+            int total = (int) (Math.pow(2, log) + resto);
+
+            retorno.appendCodePoint(total - OFFSET);
         }
 
-        return retorno.toString().getBytes(StandardCharsets.UTF_8);
+        return retorno;
     }
 }

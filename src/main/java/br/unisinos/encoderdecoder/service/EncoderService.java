@@ -5,14 +5,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class EncoderService {
 
+    public static final String ZERO = "0";
+    public static final String UM = "1";
+    public static final int ZERO_BYTE = 48;
+
     public byte[] encode(MultipartFile arquivo, char codificador) throws IOException {
 
         Encode encode = encodeFactory(codificador);
-        return encode.encode(arquivo);
+        StringBuilder codificacao = new StringBuilder();
+
+        try (InputStream input = arquivo.getInputStream()) {
+            return getBytes(encode.encode(input, codificacao));
+        }
     }
 
     private Encode encodeFactory(char codificador) {
@@ -28,7 +38,14 @@ public class EncoderService {
     }
 
     public byte[] decode(MultipartFile arquivo) throws IOException {
-        Encode encode = new EliasGamma();
-        return encode.decode(arquivo);
+        Encode encode = new Unario();
+
+        try (InputStream input = arquivo.getInputStream()) {
+            return getBytes(encode.decode(input));
+        }
+    }
+
+    private byte[] getBytes(StringBuilder decode) {
+        return decode.toString().getBytes(StandardCharsets.UTF_8);
     }
 }
