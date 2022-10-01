@@ -14,8 +14,9 @@ public class EncoderService {
     public static final String ZERO = "0";
     public static final String UM = "1";
     public static final int ZERO_BYTE = 48;
+    public static final int UM_BYTE = 49;
 
-    public byte[] encode(MultipartFile arquivo, char codificador) throws IOException {
+    public byte[] encode(MultipartFile arquivo, String codificador) throws IOException {
 
         Encode encode = encodeFactory(codificador);
         StringBuilder codificacao = new StringBuilder();
@@ -25,10 +26,10 @@ public class EncoderService {
         }
     }
 
-    private Encode encodeFactory(char codificador) {
+    private Encode encodeFactory(String codificador) {
 
-        return switch (codificador) {
-            case 'G', 'g' -> new Golomb();
+        return switch (codificador.charAt(0)) {
+            case 'G', 'g' -> new Golomb(codificador.charAt(1));
             case 'E', 'e' -> new EliasGamma();
             case 'F', 'f' -> new Fibonacci();
             case 'U', 'u' -> new Unario();
@@ -38,7 +39,7 @@ public class EncoderService {
     }
 
     public byte[] decode(MultipartFile arquivo) throws IOException {
-        Encode encode = new Unario();
+        Encode encode = new Golomb('4');
 
         try (InputStream input = arquivo.getInputStream()) {
             return getBytes(encode.decode(input));
@@ -46,6 +47,6 @@ public class EncoderService {
     }
 
     private byte[] getBytes(StringBuilder decode) {
-        return decode.toString().getBytes(StandardCharsets.UTF_8);
+        return decode.toString().getBytes(StandardCharsets.ISO_8859_1);
     }
 }

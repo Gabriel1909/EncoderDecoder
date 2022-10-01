@@ -15,7 +15,7 @@ public class EncoderController {
     private EncoderService encoderService;
 
     @PostMapping("/encode/{codificador}")
-    public byte[] encode(@RequestPart MultipartFile arquivo, @PathVariable char codificador) throws IOException {
+    public byte[] encode(@RequestPart MultipartFile arquivo, @PathVariable String codificador) throws IOException {
         return encoderService.encode(arquivo, codificador);
     }
 
