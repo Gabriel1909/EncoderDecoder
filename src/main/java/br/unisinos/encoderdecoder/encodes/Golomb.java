@@ -7,10 +7,10 @@ import static br.unisinos.encoderdecoder.service.EncoderService.*;
 
 public class Golomb implements Encode {
 
-    private final int divisor;
-    private final int tamanhoResto;
+    private int divisor;
+    private int tamanhoResto;
 
-    public Golomb(char divisor) {
+    public void init(char divisor){
         this.divisor = Character.getNumericValue(divisor);
         this.tamanhoResto = (int) Math.floor(Math.log10(this.divisor) / Math.log10(2));
     }

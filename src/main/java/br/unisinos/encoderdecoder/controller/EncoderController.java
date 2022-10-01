@@ -16,7 +16,7 @@ public class EncoderController {
 
     @PostMapping("/encode/{codificador}")
     public byte[] encode(@RequestPart MultipartFile arquivo, @PathVariable String codificador) throws IOException {
-        return encoderService.encode(arquivo, codificador);
+        return encoderService.encode(arquivo, codificador.toUpperCase());
     }
 
     @PostMapping("/decode")

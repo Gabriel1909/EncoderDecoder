@@ -18,32 +18,53 @@ public class EncoderService {
 
     public byte[] encode(MultipartFile arquivo, String codificador) throws IOException {
 
-        Encode encode = encodeFactory(codificador);
         StringBuilder codificacao = new StringBuilder();
+        Encode encode = encodeFactory(codificador, codificacao);
 
         try (InputStream input = arquivo.getInputStream()) {
             return getBytes(encode.encode(input, codificacao));
         }
     }
 
-    private Encode encodeFactory(String codificador) {
+    private Encode encodeFactory(String codificador, StringBuilder codificacao) {
 
-        return switch (codificador.charAt(0)) {
-            case 'G', 'g' -> new Golomb(codificador.charAt(1));
-            case 'E', 'e' -> new EliasGamma();
-            case 'F', 'f' -> new Fibonacci();
-            case 'U', 'u' -> new Unario();
-            case 'D', 'd' -> new Delta();
-            default -> throw new RuntimeException("Codificador não reconhecido");
-        };
+        EncodeEnum encodeEnum = EncodeEnum.valueOf(codificador.substring(0, 1));
+        Encode encode = encodeEnum.getEncode();
+
+        codificacao.append(encodeEnum.ordinal());
+
+        if (encode instanceof Golomb golomb){
+            char divisor = codificador.charAt(1);
+            codificacao.append(divisor);
+            golomb.init(divisor);
+        } else {
+            codificacao.append(0);
+        }
+
+        return encode;
     }
 
     public byte[] decode(MultipartFile arquivo) throws IOException {
-        Encode encode = new Golomb('4');
+
 
         try (InputStream input = arquivo.getInputStream()) {
+
+            Encode encode = decodeFactory(input);
+
             return getBytes(encode.decode(input));
         }
+    }
+
+    private Encode decodeFactory(InputStream input) throws IOException {
+        int codigoEncode = Character.getNumericValue(input.read());
+        char divisor = (char) input.read();
+
+        Encode encode = EncodeEnum.values()[codigoEncode].getEncode();
+
+        if (encode instanceof Golomb golomb){
+            golomb.init(divisor);
+        }
+        return encode;
     }
 
     private byte[] getBytes(StringBuilder decode) {

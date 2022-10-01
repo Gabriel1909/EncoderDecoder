@@ -10,15 +10,13 @@ public class Unario implements Encode {
     @Override
     public StringBuilder encode(InputStream arquivo, StringBuilder codificacao) throws IOException {
 
-        StringBuilder retorno = new StringBuilder();
-
         while (arquivo.available() > 0) {
             int ascii = arquivo.read();
-            retorno.append(UM.repeat(ascii));
-            retorno.append(ZERO);
+            codificacao.append(UM.repeat(ascii));
+            codificacao.append(ZERO);
         }
 
-        return retorno;
+        return codificacao;
     }
 
     @Override
