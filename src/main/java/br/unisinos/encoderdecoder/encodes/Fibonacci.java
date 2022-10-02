@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static br.unisinos.encoderdecoder.service.EncoderService.*;
+import static br.unisinos.encoderdecoder.service.Utils.*;
 import static java.util.Arrays.asList;
 
 public class Fibonacci implements Encode {
@@ -60,7 +60,7 @@ public class Fibonacci implements Encode {
             while (true) {
                 int ascii = arquivo.read();
 
-                if (ascii == UM_BYTE) {
+                if (ascii == UM_ASCII) {
                     if (ultimoUm) {
                         break;
                     }
@@ -70,7 +70,7 @@ public class Fibonacci implements Encode {
                 }
 
                 indice++;
-                ultimoUm = UM_BYTE == ascii;
+                ultimoUm = UM_ASCII == ascii;
             }
 
             retorno.appendCodePoint(soma - OFFSET);

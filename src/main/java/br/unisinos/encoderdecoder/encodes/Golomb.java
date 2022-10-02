@@ -3,15 +3,15 @@ package br.unisinos.encoderdecoder.encodes;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static br.unisinos.encoderdecoder.service.EncoderService.*;
+import static br.unisinos.encoderdecoder.service.Utils.*;
 
 public class Golomb implements Encode {
 
     private int divisor;
     private int tamanhoResto;
 
-    public void init(char divisor){
-        this.divisor = Character.getNumericValue(divisor);
+    public void init(int divisor) {
+        this.divisor = divisor;
         this.tamanhoResto = (int) Math.floor(Math.log10(this.divisor) / Math.log10(2));
     }
 
@@ -28,11 +28,8 @@ public class Golomb implements Encode {
             codificacao.append(UM);
 
             int resto = ascii % divisor;
-            StringBuilder restoAdicionado = new StringBuilder(Integer.toBinaryString(resto));
 
-            while (restoAdicionado.length() < tamanhoResto) {
-                restoAdicionado.insert(0, ZERO);
-            }
+            StringBuilder restoAdicionado = criarBinario(resto, tamanhoResto);
 
             codificacao.append(restoAdicionado);
         }
@@ -50,7 +47,7 @@ public class Golomb implements Encode {
 
             int dividir = 0;
 
-            while (ascii == ZERO_BYTE) {
+            while (ascii == ZERO_ASCII) {
                 dividir++;
                 ascii = arquivo.read();
             }

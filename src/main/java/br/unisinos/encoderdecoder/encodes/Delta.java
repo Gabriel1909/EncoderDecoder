@@ -3,7 +3,7 @@ package br.unisinos.encoderdecoder.encodes;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static br.unisinos.encoderdecoder.service.EncoderService.*;
+import static br.unisinos.encoderdecoder.service.Utils.*;
 import static java.lang.Math.abs;
 
 public class Delta implements Encode {
@@ -15,11 +15,7 @@ public class Delta implements Encode {
 
         int ultimoAscii = arquivo.read();
 
-        StringBuilder binarioInicial = new StringBuilder(Integer.toBinaryString(ultimoAscii));
-
-        while (binarioInicial.length() < OFFSET) {
-            binarioInicial.insert(0, ZERO);
-        }
+        StringBuilder binarioInicial = criarBinario(ultimoAscii, OFFSET);
 
         codificacao.append(binarioInicial);
 
@@ -37,11 +33,7 @@ public class Delta implements Encode {
 
             codificacao.append(diferenca > 0 ? ZERO : UM);
 
-            StringBuilder binario = new StringBuilder(Integer.toBinaryString(abs(diferenca)));
-
-            while (binario.length() < OFFSET - 1) {
-                binario.insert(0, ZERO);
-            }
+            StringBuilder binario = criarBinario(abs(diferenca));
 
             codificacao.append(binario);
             ultimoAscii = ascii;
@@ -60,7 +52,7 @@ public class Delta implements Encode {
 
         while (arquivo.available() > 0) {
 
-            if (arquivo.read() == ZERO_BYTE) {
+            if (arquivo.read() == ZERO_ASCII) {
                 retorno.appendCodePoint(ultimoAscii);
                 continue;
             }
@@ -69,7 +61,7 @@ public class Delta implements Encode {
 
             int caracter = lerByte(arquivo, OFFSET - 1);
 
-            if (sinal == ZERO_BYTE) {
+            if (sinal == ZERO_ASCII) {
                 caracter *= -1;
             }
 
@@ -80,15 +72,5 @@ public class Delta implements Encode {
         }
 
         return retorno;
-    }
-
-    private int lerByte(InputStream arquivo, int quantidade) throws IOException {
-        StringBuilder caracterString = new StringBuilder();
-
-        for (int i = 0; i < quantidade; i++) {
-            caracterString.appendCodePoint(arquivo.read());
-        }
-
-        return Integer.parseInt(caracterString.toString(), 2);
     }
 }

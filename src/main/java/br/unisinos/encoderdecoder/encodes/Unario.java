@@ -3,7 +3,7 @@ package br.unisinos.encoderdecoder.encodes;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static br.unisinos.encoderdecoder.service.EncoderService.*;
+import static br.unisinos.encoderdecoder.service.Utils.*;
 
 public class Unario implements Encode {
 
@@ -28,7 +28,7 @@ public class Unario implements Encode {
             int ascii = arquivo.read();
             int contador = 0;
 
-            while (ascii != ZERO_BYTE){
+            while (ascii != ZERO_ASCII) {
                 contador++;
                 ascii = arquivo.read();
             }

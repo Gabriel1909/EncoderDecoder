@@ -1,20 +1,18 @@
 package br.unisinos.encoderdecoder.service;
 
-import br.unisinos.encoderdecoder.encodes.*;
+import br.unisinos.encoderdecoder.encodes.Encode;
+import br.unisinos.encoderdecoder.encodes.EncodeEnum;
+import br.unisinos.encoderdecoder.encodes.Golomb;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
+import static br.unisinos.encoderdecoder.service.Utils.*;
 
 @Service
 public class EncoderService {
-
-    public static final String ZERO = "0";
-    public static final String UM = "1";
-    public static final int ZERO_BYTE = 48;
-    public static final int UM_BYTE = 49;
 
     public byte[] encode(MultipartFile arquivo, String codificador) throws IOException {
 
@@ -31,21 +29,23 @@ public class EncoderService {
         EncodeEnum encodeEnum = EncodeEnum.valueOf(codificador.substring(0, 1));
         Encode encode = encodeEnum.getEncode();
 
-        codificacao.append(encodeEnum.ordinal());
+        StringBuilder header = criarBinario(encodeEnum.ordinal());
 
-        if (encode instanceof Golomb golomb){
-            char divisor = codificador.charAt(1);
-            codificacao.append(divisor);
-            golomb.init(divisor);
+        if (encode instanceof Golomb golomb) {
+            int codigoDivisor = Integer.parseInt(codificador.substring(1));
+            StringBuilder divisor = criarBinario(codigoDivisor);
+            header.append(divisor);
+            golomb.init(codigoDivisor);
         } else {
-            codificacao.append(0);
+            header.append(ZERO_BYTE);
         }
+
+        codificacao.append(header);
 
         return encode;
     }
 
     public byte[] decode(MultipartFile arquivo) throws IOException {
-
 
         try (InputStream input = arquivo.getInputStream()) {
 
@@ -56,18 +56,15 @@ public class EncoderService {
     }
 
     private Encode decodeFactory(InputStream input) throws IOException {
-        int codigoEncode = Character.getNumericValue(input.read());
-        char divisor = (char) input.read();
+
+        int codigoEncode = lerByte(input);
+        int divisor = lerByte(input);
 
         Encode encode = EncodeEnum.values()[codigoEncode].getEncode();
 
-        if (encode instanceof Golomb golomb){
+        if (encode instanceof Golomb golomb) {
             golomb.init(divisor);
         }
         return encode;
-    }
-
-    private byte[] getBytes(StringBuilder decode) {
-        return decode.toString().getBytes(StandardCharsets.ISO_8859_1);
     }
 }

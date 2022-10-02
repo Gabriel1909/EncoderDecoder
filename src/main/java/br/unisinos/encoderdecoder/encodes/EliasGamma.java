@@ -3,7 +3,7 @@ package br.unisinos.encoderdecoder.encodes;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static br.unisinos.encoderdecoder.service.EncoderService.*;
+import static br.unisinos.encoderdecoder.service.Utils.*;
 
 public class EliasGamma implements Encode {
 
@@ -25,11 +25,7 @@ public class EliasGamma implements Encode {
 
             if (log > 0 || resto > 0) {
 
-                StringBuilder restoAdicionado = new StringBuilder(Integer.toBinaryString(resto));
-
-                while (restoAdicionado.length() < log) {
-                    restoAdicionado.insert(0, ZERO);
-                }
+                StringBuilder restoAdicionado = criarBinario(resto, log);
 
                 codificacao.append(restoAdicionado);
             }
@@ -47,7 +43,7 @@ public class EliasGamma implements Encode {
 
             int log = 0;
 
-            while (ascii == ZERO_BYTE) {
+            while (ascii == ZERO_ASCII) {
                 log++;
                 ascii = arquivo.read();
             }
