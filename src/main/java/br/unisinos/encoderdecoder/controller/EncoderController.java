@@ -1,14 +1,17 @@
 package br.unisinos.encoderdecoder.controller;
 
+import br.unisinos.encoderdecoder.exception.DecodificacaoException;
 import br.unisinos.encoderdecoder.service.EncoderRuidoService;
 import br.unisinos.encoderdecoder.service.EncoderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @RestController
+@ControllerAdvice
 @RequestMapping
 public class EncoderController {
 
@@ -34,7 +37,7 @@ public class EncoderController {
     }
 
     @PostMapping("/decode/tratamento-ruido")
-    public byte[] decodeRuido(@RequestPart MultipartFile arquivo) {
+    public byte[] decodeRuido(@RequestPart MultipartFile arquivo) throws IOException {
         return encoderRuidoService.decodeRuido(arquivo);
     }
 
@@ -46,8 +49,13 @@ public class EncoderController {
 
     @PostMapping("/decode/total")
     public byte[] decodeTotal(@RequestPart MultipartFile arquivo) throws IOException {
-        CustomMultipartFile decode = new CustomMultipartFile(encoderService.decode(arquivo));
-        return encoderRuidoService.encodeRuido(decode);
+        CustomMultipartFile decode = new CustomMultipartFile(encoderRuidoService.decodeRuido(arquivo));
+        return encoderService.decode(decode);
     }
 
+    @ExceptionHandler(DecodificacaoException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public String exceptionHandler(DecodificacaoException exception){
+        return exception.getMessage();
+    }
 }
