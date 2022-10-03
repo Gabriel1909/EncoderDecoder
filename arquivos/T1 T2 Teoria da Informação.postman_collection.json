@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "5b44f569-ade5-427a-ad5a-67fa8506d9b2",
+		"name": "T1 T2 Teoria da Informação",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Encode",
+			"item": [
+				{
+					"name": "Encode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice29.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/encode/E",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"encode",
+								"E"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice29.cod"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/decode",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"decode"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ruido",
+			"item": [
+				{
+					"name": "Encode ruido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice29.cod"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/encode/tratamento-ruido",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"encode",
+								"tratamento-ruido"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decode ruido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice.ecc"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/decode/tratamento-ruido",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"decode",
+								"tratamento-ruido"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Total",
+			"item": [
+				{
+					"name": "Encode total",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice29.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/encode/total/E",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"encode",
+								"total",
+								"E"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decode total",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "arquivo",
+									"type": "file",
+									"src": "alice.ecc"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/decode/total",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"decode",
+								"total"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
